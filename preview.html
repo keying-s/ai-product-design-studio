@@ -1,0 +1,550 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><meta name="description" content="Forma AI Product Design Studio · 离线预览版"/><title>Forma · 离线预览</title><style>/* THEME SOURCE OF TRUTH. Change semantic values here; feature CSS must not hardcode colors. */
+:root, [data-theme="ocean"] {
+  --theme-dot-ocean: #376bd5;
+  --theme-dot-mint: #178767;
+  --theme-dot-plum: #9c55aa;
+  --brand-50: #edf3ff;
+  --brand-100: #dce8ff;
+  --brand-200: #a8c2ff;
+  --brand-500: #376bd5;
+  --brand-600: #2558be;
+  --brand-700: #1c459b;
+  --success-50: #e6f7ef;
+  --success-600: #168257;
+  --warning-50: #fff4df;
+  --warning-600: #ad6f15;
+  --danger-50: #ffebeb;
+  --danger-600: #bf4b4b;
+  --canvas: #f6f8fc;
+  --surface: #ffffff;
+  --surface-soft: #f8fafc;
+  --surface-subtle: #f0f3f8;
+  --ink: #182940;
+  --ink-strong: #14243b;
+  --ink-muted: #6d7c90;
+  --ink-faint: #94a0b1;
+  --border: #e5eaf1;
+  --border-strong: #d4dce8;
+  --shadow-sm: 0 2px 8px rgba(21, 39, 67, .035);
+  --shadow-lg: 0 14px 40px rgba(22, 44, 75, .08);
+  --sidebar: #172943;
+  --sidebar-text: #aebed1;
+  --sidebar-active: #2d4260;
+  --sidebar-bright: #f4f8ff;
+  --white: #ffffff;
+  --focus-ring: rgba(55, 107, 213, .25);
+  --radius-xs: 5px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 22px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 28px;
+  --space-8: 32px;
+  --motion-fast: 130ms;
+  --motion-normal: 240ms;
+  --motion-slow: 420ms;
+  --ease-standard: cubic-bezier(.2, .7, .2, 1);
+}
+[data-theme="mint"] {
+  --brand-50: #e8f9f1;
+  --brand-100: #d0f3e3;
+  --brand-200: #98dec0;
+  --brand-500: #178767;
+  --brand-600: #087457;
+  --brand-700: #07563f;
+  --focus-ring: rgba(23, 135, 103, .25);
+  --sidebar: #15372f;
+  --sidebar-active: #285248;
+  --canvas: #f5faf7;
+}
+[data-theme="plum"] {
+  --brand-50: #f7ecf9;
+  --brand-100: #f0dbf3;
+  --brand-200: #dab0df;
+  --brand-500: #9c55aa;
+  --brand-600: #864293;
+  --brand-700: #73377b;
+  --focus-ring: rgba(156, 85, 170, .25);
+  --sidebar: #302440;
+  --sidebar-active: #4b375b;
+  --canvas: #faf7fb;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{font-family:Inter,"Segoe UI",-apple-system,BlinkMacSystemFont,"Noto Sans SC","Microsoft YaHei",sans-serif;-webkit-font-smoothing:antialiased}
+body{margin:0;background:var(--canvas);color:var(--ink);font-size:14px}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+button:disabled{cursor:not-allowed}
+button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid var(--focus-ring);outline-offset:2px}
+a{color:inherit;text-decoration:none}
+h1,h2,h3,h4,p{margin:0}
+h1{font-size:27px;letter-spacing:-.045em;line-height:1.3}
+h2{font-size:17px;letter-spacing:-.025em}h3{font-size:14px}
+p{line-height:1.7}
+svg{display:block}
+.hidden{display:none!important}
+.boot{display:grid;place-content:center;min-height:100vh;color:var(--ink-muted)}
+::selection{background:var(--brand-100)}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+/* Layout */
+.app-shell{display:flex;min-height:100vh}
+.sidebar{width:256px;flex:0 0 256px;background:var(--sidebar);color:var(--sidebar-text);min-height:100vh;padding:28px 15px 20px;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;z-index:20}
+.brand{display:flex;align-items:center;gap:12px;color:var(--white);padding:0 9px 25px}
+.brand-symbol{width:39px;height:39px;display:grid;grid-template-columns:repeat(2,1fr);gap:4px;padding:8px;border-radius:13px;background:var(--brand-500)}
+.brand-symbol i{background:var(--white);border-radius:3px;opacity:.96}.brand-symbol i:first-child,.brand-symbol i:last-child{background:var(--brand-200)}
+.brand-name{font-size:21px;letter-spacing:-.045em;font-weight:800;line-height:1.05}
+.brand-sub{font-size:10px;letter-spacing:.04em;color:var(--sidebar-text);margin-top:4px}
+.nav-group-label{font-size:10px;letter-spacing:.11em;font-weight:800;color:var(--sidebar-text);opacity:.7;padding:12px 15px 9px}
+.nav-links{display:flex;flex-direction:column;gap:4px}
+.nav-item{color:var(--sidebar-text);background:transparent;border:0;width:100%;padding:11px 14px;border-radius:10px;display:flex;align-items:center;gap:13px;text-align:left;font-weight:550;transition:background var(--motion-fast) ease}
+.nav-item:hover{background:var(--sidebar-active);color:var(--sidebar-bright)}.nav-item.active{background:var(--sidebar-active);color:var(--sidebar-bright);font-weight:700}
+.nav-item svg{opacity:.9}.nav-item .nav-count{margin-left:auto;background:var(--sidebar-active);border-radius:6px;padding:2px 6px;font-size:10px}
+.sidebar-bottom{margin-top:auto;padding:18px 11px 7px;border-top:1px solid var(--sidebar-active)}
+.avatar{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;background:var(--sidebar-active);color:var(--white);font-size:13px;font-weight:800}
+.sidebar-profile{display:flex;align-items:center;gap:11px}.sidebar-profile strong{display:block;color:var(--white);font-size:12px}.sidebar-profile small{font-size:11px;color:var(--sidebar-text)}
+.online-dot{width:7px;height:7px;background:var(--brand-200);border-radius:100%;display:inline-block;margin-right:5px}
+.main-frame{flex:1;min-width:0}
+.topbar{height:75px;background:var(--surface);display:flex;align-items:center;justify-content:space-between;padding:0 37px;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10;gap:15px}
+.topbar-left{display:flex;align-items:center;gap:11px;min-width:0}.topbar-title{font-size:13px;font-weight:750}.crumb{color:var(--ink-faint);font-size:12px}.topbar-actions{display:flex;gap:10px;align-items:center}
+.topbar-pill{display:flex;align-items:center;gap:7px;border:1px solid var(--border);background:var(--surface-soft);border-radius:100px;color:var(--ink-muted);padding:8px 11px;font-size:11px;font-weight:700;white-space:nowrap}
+.content{max-width:1510px;margin:auto;padding:31px 37px 80px}.page-head{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;margin-bottom:25px}.page-kicker{font-size:11px;text-transform:uppercase;letter-spacing:.105em;color:var(--brand-600);font-weight:850;margin-bottom:10px}.page-desc{font-size:13px;color:var(--ink-muted);margin-top:9px;max-width:740px;line-height:1.75}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--surface);color:var(--ink);border:1px solid var(--border-strong);border-radius:9px;padding:10px 14px;font-size:12px;font-weight:700;white-space:nowrap;transition:transform var(--motion-fast) ease,background var(--motion-fast) ease}
+.btn:hover{background:var(--surface-soft)}.btn:active{transform:scale(.98)}.btn-primary{background:var(--brand-500);color:var(--white);border-color:var(--brand-500)}.btn-primary:hover{background:var(--brand-600)}.btn-small{padding:7px 10px;font-size:11px}.btn-outline-brand{color:var(--brand-600);border-color:var(--brand-200)}.btn-full{width:100%}
+.btn:disabled{opacity:.45}.icon-btn{display:grid;place-items:center;border:1px solid var(--border);background:var(--surface);border-radius:8px;width:34px;height:34px;color:var(--ink-muted)}
+.card{border:1px solid var(--border);background:var(--surface);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm)}.card-pad{padding:22px}.card-title{font-size:14px;font-weight:800;letter-spacing:-.015em}.card-sub{font-size:12px;color:var(--ink-muted);line-height:1.65;margin-top:5px}
+.muted{color:var(--ink-muted)}.subtle{color:var(--ink-faint)}.small{font-size:12px}.tiny{font-size:11px}.overline{font-size:10px;font-weight:850;letter-spacing:.1em;color:var(--ink-faint)}
+.badge{font-size:10px;border-radius:100px;padding:5px 9px;background:var(--surface-subtle);color:var(--ink-muted);font-weight:750;display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.badge.blue{background:var(--brand-50);color:var(--brand-600)}.badge.green{background:var(--success-50);color:var(--success-600)}.badge.amber{background:var(--warning-50);color:var(--warning-600)}.badge.red{background:var(--danger-50);color:var(--danger-600)}
+.divider{height:1px;background:var(--border);margin:20px 0}
+.section-heading{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:15px}.section-heading h2{font-size:16px}.section-heading a,.text-link{color:var(--brand-600);font-size:12px;font-weight:700}
+.stats-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:15px;margin-bottom:27px}.stat-card{padding:21px;display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.stat-num{font-size:30px;font-weight:820;letter-spacing:-.055em;margin:9px 0 4px}.stat-caption{font-size:11px;color:var(--ink-muted)}.stat-icon{display:grid;place-items:center;width:37px;height:37px;border-radius:11px;background:var(--brand-50);color:var(--brand-600)}
+.dashboard-grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(250px,.9fr);gap:19px}.feature-list{display:grid;gap:12px}.feature-tile{display:flex;align-items:center;gap:17px;width:100%;border:1px solid var(--border);background:var(--surface);border-radius:13px;padding:17px;text-align:left;transition:border-color var(--motion-normal),transform var(--motion-normal)}.feature-tile:hover{border-color:var(--brand-200);transform:translateY(-2px)}.feature-icon{width:44px;height:44px;flex:0 0 auto;border-radius:12px;display:grid;place-items:center;background:var(--brand-50);color:var(--brand-600)}.feature-tile .title{font-size:13px;font-weight:800}.feature-tile .desc{font-size:11px;color:var(--ink-muted);margin-top:4px;line-height:1.55}.feature-tile .meta{margin-top:9px;display:flex;gap:7px;align-items:center}.tile-right{margin-left:auto;display:flex;gap:9px;align-items:center;flex:0 0 auto}
+.process-list{display:flex;flex-direction:column;gap:13px}.process-item{display:flex;align-items:start;gap:12px}.process-number{width:27px;height:27px;border-radius:9px;background:var(--brand-50);color:var(--brand-600);display:grid;place-items:center;font-size:11px;font-weight:850;flex:0 0 auto}.process-item b{font-size:12px}.process-item p{font-size:11px;color:var(--ink-muted);margin-top:3px}
+.activity-item{display:flex;gap:9px;padding:12px 0;border-bottom:1px solid var(--border)}.activity-item:last-child{border-bottom:0}.activity-icon{width:27px;height:27px;display:grid;place-items:center;flex:0 0 auto;background:var(--surface-subtle);color:var(--ink-muted);border-radius:9px}.activity-item strong{font-size:11px;font-weight:650}.activity-item small{display:block;color:var(--ink-faint);font-size:10px;margin-top:3px}
+/* Feature workspace */
+.feature-head{margin-bottom:22px}.feature-tagline{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:8px}.feature-head h1{margin-bottom:7px}.feature-quickinfo{display:flex;gap:12px;flex-wrap:wrap;color:var(--ink-muted);font-size:11px;margin-top:13px}
+.tabs{display:flex;align-items:center;gap:5px;padding:5px;border:1px solid var(--border);border-radius:12px;background:var(--surface);margin-bottom:20px;flex-wrap:wrap;width:max-content;max-width:100%}.tab{border:0;border-radius:8px;background:transparent;color:var(--ink-muted);font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:7px;padding:9px 14px}.tab:hover{color:var(--ink-strong)}.tab.active{background:var(--brand-50);color:var(--brand-600)}
+.workbench{display:grid;grid-template-columns:minmax(235px,.82fr) minmax(245px,.9fr) minmax(330px,1.12fr);gap:16px;align-items:stretch}.panel{min-width:0}.panel-header{display:flex;align-items:flex-start;justify-content:space-between;gap:9px;margin-bottom:18px}.panel-label{font-size:11px;color:var(--ink-faint);letter-spacing:.08em;font-weight:850;margin-bottom:6px}.panel-header h2{font-size:15px}
+.preview-panel{background:var(--surface-soft);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px;min-width:0;display:flex;flex-direction:column;align-items:stretch}.preview-top{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:14px}.preview-top .small{font-weight:750}.preview-bg{border-radius:13px;background:var(--surface-subtle);border:1px solid var(--border);padding:20px 10px;display:flex;justify-content:center;align-items:flex-start;flex:1;min-height:514px}
+.variant-switch{display:flex;gap:5px;border:1px solid var(--border);border-radius:9px;padding:3px;background:var(--surface)}.variant-switch button{padding:7px 12px;border:0;background:transparent;font-size:11px;font-weight:750;color:var(--ink-muted);border-radius:7px}.variant-switch button.active{color:var(--brand-600);background:var(--brand-50)}
+.flow-list{display:flex;flex-direction:column;gap:8px}.flow-step{position:relative;border:1px solid var(--border);background:var(--surface);border-radius:11px;display:flex;gap:12px;padding:13px 12px;text-align:left;width:100%;color:var(--ink);transition:border-color var(--motion-normal),background var(--motion-normal)}.flow-step.active{border-color:var(--brand-500);background:var(--brand-50)}.flow-step:hover{border-color:var(--brand-200)}.flow-number{width:27px;height:27px;border-radius:8px;display:grid;place-items:center;color:var(--ink-muted);background:var(--surface-subtle);font-size:10px;font-weight:850;flex:0 0 auto}.flow-step.active .flow-number{background:var(--brand-500);color:var(--white)}.flow-text strong{font-size:12px;font-weight:800}.flow-text p{font-size:11px;color:var(--ink-muted);line-height:1.5;margin-top:5px}.flow-connector{height:13px;width:1px;background:var(--border-strong);margin:-3px auto -3px 25px;position:relative}.flow-connector::after{content:'';display:block;position:absolute;bottom:0;left:-3px;width:7px;height:7px;border-right:1px solid var(--border-strong);border-bottom:1px solid var(--border-strong);transform:rotate(45deg)}
+.event-chip{font-family:ui-monospace,"SFMono-Regular",Consolas,monospace;font-size:10px;color:var(--ink-faint);margin-top:7px;overflow-wrap:anywhere}
+.info-card{background:var(--surface-soft);border:1px solid var(--border);padding:14px;border-radius:10px;margin-bottom:13px}.info-card strong{font-size:11px}.info-card p{font-size:12px;margin-top:5px;color:var(--ink-muted)}.info-card .idea{display:flex;gap:7px;align-items:center;color:var(--brand-600);font-weight:750;font-size:11px;margin-bottom:6px}
+.spec-divider{height:1px;background:var(--border);margin:16px 0}.spec-label{font-size:10px;font-weight:850;letter-spacing:.07em;color:var(--ink-faint);margin-bottom:9px}.spec-line{display:flex;gap:10px;align-items:flex-start;margin-bottom:11px;font-size:12px;line-height:1.55}.spec-bullet{height:19px;width:19px;display:grid;place-items:center;border-radius:6px;background:var(--brand-50);color:var(--brand-600);flex:0 0 auto}
+.field-table{width:100%;border-collapse:collapse;font-size:12px;text-align:left}.field-table th{font-size:10px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-faint);font-weight:800;background:var(--surface-soft)}.field-table th,.field-table td{border-bottom:1px solid var(--border);padding:12px 9px;vertical-align:top}.field-table code{font-size:11px;color:var(--brand-600);overflow-wrap:anywhere}.field-table small{color:var(--ink-muted);font-size:11px}.required-dot{color:var(--danger-600);font-size:12px}
+.field-scroll{overflow-x:auto}.field-scroll table{min-width:630px}
+.token-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:14px}.swatch{height:49px;width:49px;border:1px solid var(--border);border-radius:12px}.token-item{padding:11px 9px;min-width:110px}.token-item strong{font-size:11px;display:block;margin-top:9px}.token-item span{color:var(--ink-muted);font-size:10px}.token-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.token-card{padding:15px;border:1px solid var(--border);border-radius:12px}.token-card .swatch{width:100%;height:64px}
+.theme-options{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.theme-option{display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--surface);border:1px solid var(--border);border-radius:9px;font-size:12px;font-weight:750}.theme-option.active{border-color:var(--brand-500);box-shadow:0 0 0 2px var(--brand-50)}.theme-dot{width:15px;height:15px;border-radius:6px;display:inline-block}
+.motion-dots{display:flex;gap:6px;align-items:center;padding:17px 4px}.motion-dots span{width:8px;height:8px;border-radius:50%;background:var(--brand-500);animation:bounce 1.2s infinite}.motion-dots span:nth-child(2){animation-delay:.16s}.motion-dots span:nth-child(3){animation-delay:.32s}@keyframes bounce{0%,70%,100%{transform:translateY(0);opacity:.55}35%{transform:translateY(-10px);opacity:1}}
+/* Phone demo */
+.phone-demo{width:100%;max-width:296px;min-height:460px;background:var(--surface);border:1px solid var(--border-strong);border-radius:27px;box-shadow:var(--shadow-lg);padding:13px 15px 10px;position:relative;overflow:hidden;display:flex;flex-direction:column}
+.phone-status{display:flex;justify-content:space-between;align-items:center;font-size:10px;font-weight:800;padding:0 8px;color:var(--ink-strong)}
+.phone-head{display:flex;align-items:center;justify-content:space-between;margin:21px 0 13px;font-size:11px;color:var(--ink-muted);gap:4px}.phone-back{display:flex;align-items:center;gap:4px;font-size:10px;white-space:nowrap}.phone-head-title{font-weight:750;color:var(--ink-strong)}
+.phone-bottom{height:16px;margin-top:auto;display:grid;place-items:end center;padding-top:8px}.phone-bottom span{height:4px;background:var(--ink-strong);width:92px;border-radius:20px}
+.swim-illustration{height:102px;border-radius:15px;background:linear-gradient(145deg,var(--brand-50),var(--brand-100));display:flex;justify-content:center;align-items:center;position:relative;margin-bottom:13px}.swim-emote{font-size:43px;z-index:1}.swim-water{font-size:39px;color:var(--brand-200);font-weight:900;transform:rotate(90deg);opacity:.7}.swim-water.next{transform:rotate(-90deg)}
+.demo-copy .eyebrow{font-size:10px;color:var(--brand-600);font-weight:750;margin:3px 0 4px}.demo-copy h3,.create-body h3,.recommend-body h3{font-size:18px;letter-spacing:-.035em;color:var(--ink-strong)}.demo-copy p,.create-body>p,.recommend-body>p{color:var(--ink-muted);font-size:11px;margin-top:4px;line-height:1.55}
+.demo-checklist{margin:15px 0 11px}.demo-section-title{display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:800;margin-bottom:7px}.demo-section-title span{color:var(--ink-faint);font-size:10px}.demo-check{display:flex;align-items:center;gap:9px;background:var(--surface-soft);border:1px solid var(--border);padding:9px 10px;border-radius:9px;margin:6px 0;font-size:11px;cursor:pointer}.demo-check input{appearance:none;width:16px;height:16px;flex:0 0 auto;border-radius:5px;border:1.5px solid var(--border-strong);background:var(--surface);margin:0}.demo-check input:checked{background:var(--brand-500);border-color:var(--brand-500)}.demo-check input:checked::after{content:'✓';color:var(--white);font-size:11px;font-weight:800;display:grid;place-items:center;line-height:13px}.demo-check-label{flex:1}.done-tick{color:var(--success-600)}
+.demo-primary{display:flex;align-items:center;gap:7px;justify-content:center;width:100%;border:0;background:var(--brand-500);color:var(--white);font-weight:800;font-size:11px;border-radius:10px;padding:11px;margin-top:9px;transition:opacity var(--motion-fast),transform var(--motion-fast)}.demo-primary:hover:not(:disabled){background:var(--brand-600)}.demo-primary:disabled{opacity:.38}.demo-primary:active{transform:scale(.985)}
+.demo-success{text-align:center;margin:auto 0;padding:20px 5px 18px;animation:popIn var(--motion-slow) var(--ease-standard)}.success-circle{width:67px;height:67px;display:grid;place-items:center;background:var(--success-50);color:var(--success-600);border-radius:50%;margin:3px auto 16px}.demo-success h3{font-size:19px}.demo-success p{font-size:12px;color:var(--ink-muted);margin-top:7px}.demo-success-tag{display:inline-flex;gap:5px;align-items:center;background:var(--success-50);color:var(--success-600);font-size:10px;padding:7px 11px;border-radius:100px;margin-top:15px;font-weight:750}
+@keyframes popIn{0%{opacity:0;transform:translateY(12px) scale(.9)}70%{opacity:1;transform:translateY(-2px) scale(1.03)}100%{opacity:1;transform:none}}
+.demo-compact{display:flex;gap:10px;border:1px solid var(--border);border-radius:12px;padding:12px;margin:19px 0 13px;align-items:center}.demo-compact-icon{height:34px;width:34px;border-radius:10px;display:grid;place-items:center;color:var(--brand-600);background:var(--brand-50)}.demo-compact>div:nth-child(2){flex:1}.demo-compact strong{font-size:12px}.demo-compact small{display:block;font-size:10px;color:var(--ink-muted);margin-top:4px}
+.demo-overlay{position:absolute;inset:41px 0 0;padding:23px 17px 15px;background:var(--surface);z-index:2;display:flex;flex-direction:column;animation:slideUp var(--motion-normal) var(--ease-standard)}.demo-overlay-header{display:flex;justify-content:space-between;align-items:center}.demo-overlay-header button{background:transparent;border:0;padding:5px;color:var(--ink-muted)}.demo-overlay>p{font-size:11px;color:var(--ink-muted);margin-top:7px}.demo-overlay .demo-primary{margin-top:auto}.inset{margin-top:20px}.demo-overlay .phone-bottom{display:none}@keyframes slideUp{from{opacity:.2;transform:translateY(26px)}to{opacity:1;transform:translateY(0)}}
+.create-hero{margin:16px 0 22px;display:flex;align-items:center;gap:8px;color:var(--brand-600);font-size:11px;font-weight:800}.create-hero-icon{width:34px;height:34px;background:var(--brand-50);display:grid;place-items:center;border-radius:10px}.create-body textarea{border:1px solid var(--border-strong);border-radius:10px;padding:12px;width:100%;resize:vertical;min-height:84px;margin-top:17px;background:var(--surface-soft);font-size:11px;line-height:1.7;color:var(--ink)}.parsed-card{border:1px solid var(--border);background:var(--surface-soft);padding:14px;border-radius:11px;margin:14px 0}.parsed-caption{font-size:10px;color:var(--brand-600);font-weight:800}.parsed-title{font-size:13px;font-weight:850;margin-top:9px;display:flex;align-items:center;gap:6px}.parsed-line{font-size:11px;display:flex;align-items:center;gap:7px;color:var(--ink-muted);margin-top:9px}
+.recommend-body{padding-top:21px}.recommend-label{font-size:10px;color:var(--brand-600);font-weight:850;letter-spacing:.08em;margin-bottom:9px}.rec-card{border:1px solid var(--border);box-shadow:var(--shadow-sm);border-radius:15px;padding:15px;margin-top:22px;background:var(--surface)}.rec-card.focus{background:var(--brand-50);border-color:var(--brand-200)}.rec-icon{font-size:32px;margin-bottom:8px}.rec-badge{display:inline-flex;gap:4px;align-items:center;font-size:10px;border-radius:100px;padding:4px 7px;background:var(--brand-50);color:var(--brand-600);font-weight:750}.rec-card h3{font-size:16px;margin-top:9px}.rec-card p{font-size:11px;color:var(--ink-muted);margin-top:5px}.rec-reason{display:flex;gap:7px;color:var(--brand-700);font-size:11px;line-height:1.5;padding:10px;margin-top:12px;background:var(--brand-50);border-radius:8px}.rec-reason svg{flex:0 0 auto}.rec-actions{display:flex;gap:7px;align-items:center;margin-top:13px}.rec-actions .demo-primary{flex:1}.btn-quiet{border:0;color:var(--ink-muted);background:var(--surface-subtle);padding:10px;border-radius:9px;margin-top:9px;font-size:11px}
+/* Other views */
+.review-layout{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(275px,.75fr);gap:18px}.check-row{display:flex;align-items:flex-start;gap:12px;padding:13px 0;border-bottom:1px solid var(--border);font-size:12px;line-height:1.5}.check-row:last-child{border-bottom:0}.check-row input{accent-color:var(--brand-500);margin-top:3px}.check-row p{color:var(--ink-muted);font-size:11px;margin-top:3px}.textarea{width:100%;min-height:135px;resize:vertical;border:1px solid var(--border-strong);background:var(--surface-soft);border-radius:10px;padding:13px;font-size:12px;line-height:1.6;color:var(--ink)}.form-note{font-size:11px;color:var(--ink-muted);margin-top:6px}
+.compare-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:17px}.compare-panel{min-width:0}.compare-preview{display:flex;justify-content:center;background:var(--surface-subtle);border-radius:12px;padding:21px 13px;margin:14px 0;min-height:510px}.compare-preview .phone-demo{max-width:285px}.compare-panel h3{font-size:14px}.compare-panel p{font-size:12px;color:var(--ink-muted);margin-top:7px}.compare-actions{display:flex;gap:7px;margin-top:13px;flex-wrap:wrap}
+.state-steps{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.state-step{padding:10px 12px;border:1px solid var(--border);border-radius:9px;font-size:11px;background:var(--surface);display:flex;align-items:center;gap:7px}.state-step.active{border-color:var(--brand-500);color:var(--brand-600);background:var(--brand-50)}
+.cta-banner{background:linear-gradient(130deg,var(--brand-700),var(--sidebar));border-radius:16px;color:var(--white);padding:25px 28px;display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:25px;overflow:hidden}.cta-banner h2{font-size:18px;letter-spacing:-.03em}.cta-banner p{font-size:12px;opacity:.8;margin-top:7px;max-width:600px}.cta-banner .btn{flex:0 0 auto}.cta-graphic{opacity:.18;margin-left:auto}
+.spec-block{padding:18px;background:var(--surface-soft);border:1px solid var(--border);border-radius:12px}.spec-block h3{margin-bottom:8px}.spec-block p{color:var(--ink-muted);font-size:12px}.spec-block code{background:var(--brand-50);color:var(--brand-700);padding:2px 5px;border-radius:4px;font-size:11px}.doc-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.pill-step{display:flex;align-items:center;gap:11px;padding:13px;border:1px solid var(--border);border-radius:10px;background:var(--surface)}.pill-step .circle-no{width:26px;height:26px;border-radius:8px;background:var(--brand-50);display:grid;place-items:center;color:var(--brand-600);font-weight:800;font-size:11px}.pill-step strong{font-size:12px}.pill-step p{font-size:10px;color:var(--ink-muted);margin-top:3px}
+.toast{position:fixed;right:26px;bottom:23px;padding:13px 17px;border-radius:11px;box-shadow:var(--shadow-lg);background:var(--ink-strong);color:var(--white);font-size:12px;z-index:100;max-width:360px;animation:popIn var(--motion-normal) var(--ease-standard)}
+.mobile-top{display:none}.sidebar-backdrop{display:none}
+@media(max-width:1370px){.workbench{grid-template-columns:minmax(220px,.9fr) minmax(230px,.9fr)}.preview-panel{grid-column:1/-1}.preview-bg{min-height:500px}.content{padding:25px 25px 60px}.topbar{padding:0 25px}}
+@media(max-width:1050px){.sidebar{width:221px;flex-basis:221px}.dashboard-grid{grid-template-columns:1fr}.stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.token-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:730px){.sidebar{position:fixed;left:0;top:0;transform:translateX(-105%);transition:transform var(--motion-normal);box-shadow:var(--shadow-lg)}.sidebar.open{transform:translateX(0)}.sidebar-backdrop.open{display:block;position:fixed;inset:0;background:var(--ink-strong);opacity:.3;z-index:19}.mobile-top{display:grid;place-items:center}.topbar{height:64px;padding:0 16px}.topbar-pill{display:none}.content{padding:22px 16px 55px}.page-head{align-items:flex-start;flex-direction:column}.page-head h1{font-size:24px}.workbench{grid-template-columns:1fr}.preview-panel{grid-column:auto}.stats-grid{gap:10px}.stat-card{padding:15px}.stat-num{font-size:24px}.review-layout,.compare-grid,.doc-grid{grid-template-columns:1fr}.feature-tile{gap:10px;padding:14px}.feature-icon{width:36px;height:36px}.tile-right .badge{display:none}.cta-banner{padding:19px;align-items:flex-start;flex-direction:column}.token-grid{grid-template-columns:repeat(2,1fr)}.topbar-title{font-size:11px}}
+</style></head><body><div id="app"></div><script>(function(){const esc=escapeHTML;const paths={
+ grid:'<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',
+ layers:'<path d="m12 2 9 5-9 5-9-5 9-5Z"/><path d="m3 12 9 5 9-5M3 17l9 5 9-5"/>',
+ layout:'<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M9 9h12"/>',
+ palette:'<circle cx="12" cy="12" r="9"/><circle cx="7.5" cy="11" r="1"/><circle cx="11" cy="7" r="1"/><circle cx="16" cy="8" r="1"/><path d="M19 15c-3.5-1-5 4-2 5"/>',
+ check:'<path d="m5 12 4 4L19 6"/>',
+ checkcircle:'<circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/>',
+ circle:'<circle cx="12" cy="12" r="9"/>',
+ play:'<path d="m8 5 11 7-11 7V5Z"/>',
+ pause:'<path d="M8 5v14M16 5v14"/>',
+ refresh:'<path d="M20 11a8 8 0 0 0-14-5L3 9m0-6v6h6M4 13a8 8 0 0 0 14 5l3-3m0 6v-6h-6"/>',
+ chevron:'<path d="m9 18 6-6-6-6"/>',
+ arrow:'<path d="M5 12h14m-6-6 6 6-6 6"/>',
+ down:'<path d="m6 9 6 6 6-6"/>',
+ file:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6M8 13h8M8 17h8"/>',
+ workflow:'<rect x="2" y="8" width="7" height="7" rx="2"/><rect x="15" y="2" width="7" height="7" rx="2"/><rect x="15" y="15" width="7" height="7" rx="2"/><path d="M9 11h3a3 3 0 0 0 3-3M9 12h3a3 3 0 0 1 3 3"/>',
+ shield:'<path d="m12 2 8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4Z"/><path d="m9 12 2 2 4-4"/>',
+ spark:'<path d="m12 3 2 7 7 2-7 2-2 7-2-7-7-2 7-2 2-7Z"/>',
+ settings:'<circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1l2-1.5-2-3.5-2.4 1A7 7 0 0 0 14.7 6L14 3h-4l-.7 3a7 7 0 0 0-1.8 1l-2.4-1-2 3.5 2 1.5a7 7 0 0 0 0 2l-2 1.5 2 3.5 2.4-1a7 7 0 0 0 1.8 1L10 21h4l.7-3a7 7 0 0 0 1.8-1l2.4 1 2-3.5-2-1.5a7 7 0 0 0 .1-1Z"/>',
+ list:'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',
+ code:'<path d="m8 8-4 4 4 4m8-8 4 4-4 4m-6 4 4-12"/>',
+ copy:'<rect x="8" y="8" width="13" height="13" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/>',
+ download:'<path d="M12 3v12m-4-4 4 4 4-4M4 17v4h16v-4"/>',
+ external:'<path d="M13 4h7v7M20 4l-9 9M20 13v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h6"/>',
+ clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l4 2"/>',
+ message:'<path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5 9 9 0 0 1-4-.9L3 21l2-5a8.5 8.5 0 1 1 16-4.5Z"/>',
+ monitor:'<rect x="2" y="3" width="20" height="15" rx="2"/><path d="M8 22h8M12 18v4"/>',
+ git:'<circle cx="6" cy="3" r="2"/><circle cx="6" cy="21" r="2"/><circle cx="18" cy="6" r="2"/><path d="M6 5v14M6 12c0-4 12-2 12-4"/>',
+ archive:'<rect x="3" y="4" width="18" height="4" rx="1"/><path d="M5 8v12h14V8M10 12h4"/>',
+ menu:'<path d="M4 6h16M4 12h16M4 18h16"/>',
+ close:'<path d="M5 5l14 14M19 5 5 19"/>',
+ info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/>',
+ arrowleft:'<path d="M19 12H5m6 6-6-6 6-6"/>',
+ zap:'<path d="m13 2-9 12h7l-1 8 10-12h-7l0-8Z"/>',
+ sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+ target:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',
+ eye:'<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>',
+ plus:'<path d="M12 5v14M5 12h14"/>'
+};
+function icon(name,size=18){return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths[name]||paths.circle}</svg>`}
+function escapeHTML(value=''){return String(value).replace(/[&<>"']/g, s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]))}
+
+/** Feature packages are machine-readable. Keep data, flows, prototypes and reviews linked by ID. */
+const features = [
+  {
+    id: 'F001', title: '游泳准备清单', category:'任务体验', status:'exploring', priority:'P0', updated:'2026-11-05',
+    summary:'出门前逐项确认必需品，降低遗漏概率。比较直接清单与引导核对两种完成方式。',
+    problem:'用户会记得去游泳，却可能忘记带泳裤、泳镜或学生卡。',
+    goal:'用户能在任务卡上确认装备并获得明确的完成反馈。',
+    nonGoals:['不实现真实定位提醒','原型不向业务数据库写入数据'],
+    requirements:[
+      {id:'REQ-001',text:'列出本次游泳任务必须携带的物品',type:'must'},
+      {id:'REQ-002',text:'未确认全部物品时不能进入“已准备”状态',type:'must'},
+      {id:'REQ-003',text:'完成后展示可辨识的反馈与状态变化',type:'must'},
+      {id:'REQ-004',text:'可对比直接清单与引导核对两种交互',type:'should'}
+    ],
+    fields:[
+      {key:'title',label:'任务名称',type:'string',example:'去游泳',required:true,origin:'task.title'},
+      {key:'scheduledAt',label:'计划时间',type:'datetime | null',example:'明天 15:00',required:false,origin:'task.scheduledAt'},
+      {key:'requirements',label:'准备事项',type:'list<string>',example:'泳裤、泳镜、学生卡',required:true,origin:'task.requirements（待对接）'},
+      {key:'checked',label:'确认状态',type:'list<boolean>',example:'[true, false, false]',required:true,origin:'原型本地状态'},
+      {key:'ready',label:'准备完成',type:'boolean',example:'false',required:true,origin:'推导字段'},
+      {key:'note',label:'原始备注',type:'string | null',example:'记得带学生卡',required:false,origin:'task.note'}
+    ],
+    variants:[
+      {id:'a',name:'方案 A · 直接清单',description:'在卡片内完成全部勾选；操作直接，信息始终可见。',tag:'更少步骤',steps:[
+        {id:'open',name:'打开任务卡',detail:'三项装备均未确认',event:'task.opened'},
+        {id:'partial',name:'勾选物品',detail:'勾选“泳裤”，进度同步更新',event:'item.checked'},
+        {id:'ready',name:'全部核对',detail:'三项都已确认，完成按钮激活',event:'items.ready'},
+        {id:'done',name:'确认完成',detail:'展示完成动画与“准备好了”文案',event:'task.completed'}
+      ]},
+      {id:'b',name:'方案 B · 引导核对',description:'先显示简洁卡片，再进入逐项引导；适合更复杂的准备任务。',tag:'更强引导',steps:[
+        {id:'open',name:'打开任务卡',detail:'只显示摘要和开始按钮',event:'task.opened'},
+        {id:'start',name:'进入核对',detail:'打开独立的装备检查面板',event:'checklist.started'},
+        {id:'ready',name:'逐项核对',detail:'完成三项检查后才能继续',event:'items.ready'},
+        {id:'done',name:'确认完成',detail:'关闭核对面板，显示完成反馈',event:'task.completed'}
+      ]}
+    ],
+    acceptance:[
+      {id:'AC-001',text:'初始状态下完成按钮不可用'},
+      {id:'AC-002',text:'只有三项全部确认后才能完成'},
+      {id:'AC-003',text:'取消任意一项确认后再次禁用完成按钮'},
+      {id:'AC-004',text:'完成后显示反馈，且支持重置演示'},
+      {id:'AC-005',text:'切换主题不改变业务数据和交互逻辑'}
+    ]
+  },
+  {
+    id:'F002',title:'自然语言创建任务',category:'AI 输入',status:'draft',priority:'P1',updated:'2026-11-05',
+    summary:'自然语言输入 → AI 解析预览 → 用户确认 → 创建任务（演示中使用 Mock）。',
+    problem:'用户不想手动填写大量任务表单字段。',goal:'一句话完成任务意图输入，并能确认 AI 的解析结果。',
+    nonGoals:['当前不调用真实大模型','当前不连接正式 createTask API'],
+    requirements:[
+      {id:'REQ-101',text:'支持自然语言描述待办事项',type:'must'},
+      {id:'REQ-102',text:'在提交前展示解析结果',type:'must'},
+      {id:'REQ-103',text:'失败时不显示虚假的成功状态',type:'must'}
+    ],
+    fields:[
+      {key:'rawText',label:'用户输入',type:'string',example:'明天去游泳，带泳镜',required:true,origin:'user.message'},
+      {key:'title',label:'解析标题',type:'string',example:'去游泳',required:true,origin:'AI 提取'},
+      {key:'scheduledAt',label:'计划时间',type:'datetime | null',example:'明天',required:false,origin:'AI 提取'},
+      {key:'note',label:'备注',type:'string | null',example:'带泳镜',required:false,origin:'AI 提取'},
+      {key:'status',label:'创建状态',type:'enum',example:'draft / created',required:true,origin:'原型本地状态'}
+    ],
+    variants:[
+      {id:'a',name:'方案 A · 确认后创建',description:'AI 解析后展示字段预览，由用户确认再提交。',tag:'更可控',steps:[
+        {id:'input',name:'输入自然语言',detail:'用户输入一句任务描述',event:'message.input'},
+        {id:'parsing',name:'AI 解析',detail:'展示解析进度与结构化结果',event:'task.parsing'},
+        {id:'review',name:'人工确认',detail:'用户确认解析字段',event:'task.reviewed'},
+        {id:'created',name:'任务创建成功',detail:'展示成功状态（Mock）',event:'task.created'}
+      ]},
+      {id:'b',name:'方案 B · 快速创建',description:'输入后直接创建，之后允许撤销，减少步骤。',tag:'更快',steps:[
+        {id:'input',name:'输入自然语言',detail:'用户输入一句任务描述',event:'message.input'},
+        {id:'parsing',name:'快速识别',detail:'自动解析并跳过独立确认页',event:'task.parsing'},
+        {id:'review',name:'展示创建摘要',detail:'任务已创建，可撤销（Mock）',event:'task.created'},
+        {id:'created',name:'完成反馈',detail:'显示成功提示',event:'task.confirmed'}
+      ]}
+    ],
+    acceptance:[
+      {id:'AC-101',text:'空输入不允许提交'},
+      {id:'AC-102',text:'解析字段与输入的原文保持可追溯'},
+      {id:'AC-103',text:'原型明确标注 Mock，不误写真实数据'},
+      {id:'AC-104',text:'两种交互方案都可以独立演示'}
+    ]
+  },
+  {
+    id:'F003',title:'今日智能推荐',category:'主动推荐',status:'draft',priority:'P1',updated:'2026-11-05',
+    summary:'根据时间和任务信息展示下一步推荐，并让用户接受、跳过或延后。',
+    problem:'任务太多时，用户不知道现在应该先做什么。',goal:'减少选择成本，让用户快速进入有价值的下一步。',
+    nonGoals:['当前没有真实推荐算法','不连接日历或地理位置'],
+    requirements:[
+      {id:'REQ-201',text:'展示具体推荐及推荐原因',type:'must'},
+      {id:'REQ-202',text:'支持接受与跳过',type:'must'},
+      {id:'REQ-203',text:'明确区分推荐与任务的真实状态',type:'must'}
+    ],
+    fields:[
+      {key:'taskTitle',label:'任务名称',type:'string',example:'准备游泳装备',required:true,origin:'task.title'},
+      {key:'reason',label:'推荐理由',type:'string',example:'距离出门不远了',required:true,origin:'recommendation.reason'},
+      {key:'estimatedMinutes',label:'预计耗时',type:'number',example:'2',required:false,origin:'task.estimate'},
+      {key:'score',label:'排序权重',type:'number',example:'0.86',required:false,origin:'recommendation.score'},
+      {key:'decision',label:'用户选择',type:'enum',example:'accept / skip',required:false,origin:'原型本地状态'}
+    ],
+    variants:[
+      {id:'a',name:'方案 A · 推荐卡片',description:'首页推荐卡片，展示理由并提供接受/跳过操作。',tag:'可解释',steps:[
+        {id:'view',name:'看到推荐',detail:'展示任务与推荐理由',event:'recommendation.shown'},
+        {id:'consider',name:'浏览原因',detail:'用户查看推荐依据',event:'recommendation.explored'},
+        {id:'accept',name:'接受推荐',detail:'开启准备任务',event:'recommendation.accepted'},
+        {id:'done',name:'进入专注',detail:'显示已选择的下一步',event:'focus.started'}
+      ]},
+      {id:'b',name:'方案 B · 专注模式',description:'只呈现一件值得做的事，减少认知负担。',tag:'极简',steps:[
+        {id:'view',name:'看到一个选择',detail:'突出当前最重要任务',event:'recommendation.shown'},
+        {id:'consider',name:'查看详情',detail:'展开预计耗时和原因',event:'recommendation.explored'},
+        {id:'accept',name:'开始行动',detail:'点击开始执行',event:'recommendation.accepted'},
+        {id:'done',name:'进入专注',detail:'进入行动反馈',event:'focus.started'}
+      ]}
+    ],
+    acceptance:[
+      {id:'AC-201',text:'推荐卡片必须提供“为什么推荐”信息'},
+      {id:'AC-202',text:'跳过推荐不应修改真实任务状态'},
+      {id:'AC-203',text:'切换交互方案后可重播完整流程'}
+    ]
+  }
+];
+
+function getFeature(id){return features.find(f=>f.id===id)||features[0]}
+function getVariant(feature,id){return feature.variants.find(v=>v.id===id)||feature.variants[0]}
+
+const KEY='forma-studio-v1';
+const defaults={theme:'ocean',currentFeature:'F001',page:'overview',activeTab:'requirements',variantByFeature:{F001:'a',F002:'a',F003:'a'},approved:{},reviews:{},reviewedChecks:{},activity:[]};
+function loadState(){
+ try {const raw=JSON.parse(localStorage.getItem(KEY)||'null');return {...defaults,...raw,variantByFeature:{...defaults.variantByFeature,...raw?.variantByFeature},approved:{...raw?.approved},reviews:{...raw?.reviews},reviewedChecks:{...raw?.reviewedChecks},activity:Array.isArray(raw?.activity)?raw.activity.slice(0,30):[]}}
+ catch{return {...defaults}}
+}
+function saveState(s){try{localStorage.setItem(KEY,JSON.stringify(s))}catch{}}
+function logAction(s,message){s.activity=[{message,time:new Date().toISOString()},...s.activity].slice(0,30);saveState(s)}
+function resetLocalData(){localStorage.removeItem(KEY)}
+
+
+function validateFeature(feature){
+ const failures=[];
+ if(!/^F\d{3,}$/.test(feature.id))failures.push('ID 格式错误');
+ if(!feature.title?.trim())failures.push('缺少名称');
+ if(!feature.problem?.trim()||!feature.goal?.trim())failures.push('缺少问题或目标');
+ if(!feature.requirements?.length)failures.push('缺少需求');
+ if(!feature.fields?.length)failures.push('缺少业务字段');
+ if(!feature.variants?.length)failures.push('缺少交互方案');
+ if(!feature.acceptance?.length)failures.push('缺少验收标准');
+ const ids=new Set();
+ for(const v of feature.variants||[]){
+  if(ids.has(v.id))failures.push('重复方案 ID '+v.id);ids.add(v.id);
+  if(!v.steps?.length)failures.push(v.id+' 缺少交互步骤');
+  const steps=(v.steps||[]).map(x=>x.id);
+  if(new Set(steps).size!==steps.length)failures.push(v.id+' 步骤 ID 重复');
+ }
+ return {ok:!failures.length,failures};
+}
+function studioHealth(){return features.map(f=>({id:f.id,...validateFeature(f)}))}
+
+
+const names=['泳裤','泳镜','学生卡'];
+/** Independent instance per preview. No shared state across A/B or comparison panels. */
+function mountSwim(target,variant,notify=()=>{}){
+ let checks=[false,false,false],opened=false,completed=false;let timerIds=[];
+ const clearTimers=()=>{timerIds.forEach(clearTimeout);timerIds=[]};
+ function draw(){
+  const ready=checks.every(Boolean);
+  target.innerHTML=`<div class="phone-demo"><div class="phone-status"><span>9:41</span><span>●●● ▰</span></div>
+  <div class="phone-head"><span class="phone-back">${icon('arrowleft',16)} 返回</span><span class="phone-head-title">任务详情</span><span>···</span></div>
+  <div class="swim-illustration"><span class="swim-water">≈</span><span class="swim-emote">🏊</span><span class="swim-water next">≈</span></div>
+  ${completed?`<div class="demo-success" role="status"><div class="success-circle">${icon('check',30)}</div><h3>准备好了！</h3><p>三件物品都已确认。<br>祝你游泳愉快。</p><span class="demo-success-tag">${icon('checkcircle',13)} 任务状态已更新</span></div>`:
+   `<div class="demo-copy"><div class="eyebrow">明天 · 15:00</div><h3>去游泳</h3><p>别忘了出门前带好装备</p></div>
+    ${variant==='a'?`<div class="demo-checklist"><div class="demo-section-title">出门准备 <span>${checks.filter(Boolean).length} / 3</span></div>
+      ${names.map((n,i)=>`<label class="demo-check"><input type="checkbox" data-item="${i}" ${checks[i]?'checked':''}/><span class="demo-check-label">${n}</span>${checks[i]?`<span class="done-tick">${icon('check',15)}</span>`:''}</label>`).join('')}
+    </div><button class="demo-primary" data-action="finish" ${ready?'':'disabled'}>确认准备完成 ${icon('arrow',15)}</button>`:
+    `<div class="demo-compact"><div class="demo-compact-icon">${icon('list',19)}</div><div><strong>出门前检查</strong><small>泳裤 · 泳镜 · 学生卡</small></div><span>${icon('chevron',17)}</span></div><button class="demo-primary" data-action="open">开始核对 ${icon('arrow',15)}</button>`}
+    ${variant==='b'&&opened?`<div class="demo-overlay"><div class="demo-overlay-header"><strong>核对你的装备</strong><button data-action="close" aria-label="关闭">${icon('close',17)}</button></div>
+      <p>出发前逐项确认，确保没有遗漏。</p><div class="demo-checklist inset">${names.map((n,i)=>`<label class="demo-check"><input type="checkbox" data-item="${i}" ${checks[i]?'checked':''}/><span class="demo-check-label">${n}</span>${checks[i]?`<span class="done-tick">${icon('check',15)}</span>`:''}</label>`).join('')}</div>
+      <button class="demo-primary" data-action="finish" ${ready?'':'disabled'}>全部准备好了 ${icon('check',15)}</button></div>`:''}`}
+  <div class="phone-bottom"><span></span></div></div>`;
+  target.querySelectorAll('[data-item]').forEach(c=>c.addEventListener('change',()=>{checks[Number(c.dataset.item)]=c.checked;notify('item.checked');draw()}));
+  target.querySelector('[data-action="finish"]')?.addEventListener('click',()=>{if(!checks.every(Boolean))return;completed=true;opened=false;notify('task.completed');draw()});
+  target.querySelector('[data-action="open"]')?.addEventListener('click',()=>{opened=true;notify('checklist.started');draw()});
+  target.querySelector('[data-action="close"]')?.addEventListener('click',()=>{opened=false;draw()});
+ }
+ function setStep(step){
+  clearTimers();checks=[false,false,false];opened=false;completed=false;
+  if(step===1){if(variant==='b')opened=true;else checks[0]=true}
+  if(step===2){checks=[true,true,true];opened=variant==='b'}
+  if(step>=3){checks=[true,true,true];completed=true}
+  draw();
+ }
+ function replay(onStep=()=>{}){
+  clearTimers();setStep(0);onStep(0);
+  const seq=variant==='a'?[[650,()=>{checks[0]=true;draw();onStep(1)}],[1100,()=>{checks[1]=true;draw()}],[1600,()=>{checks[2]=true;draw();onStep(2)}],[2200,()=>{completed=true;draw();onStep(3)}]]:
+   [[550,()=>{opened=true;draw();onStep(1)}],[1000,()=>{checks[0]=true;draw()}],[1400,()=>{checks[1]=true;draw()}],[1800,()=>{checks[2]=true;draw();onStep(2)}],[2400,()=>{completed=true;opened=false;draw();onStep(3)}]];
+  timerIds=seq.map(([t,fn])=>setTimeout(fn,t));
+ }
+ draw();return {setStep,replay,reset:()=>setStep(0),destroy:clearTimers};
+}
+
+
+function mountCreate(target,variant,notify=()=>{}){
+ let step=0,input='明天下午去游泳，记得带泳裤、泳镜和学生卡',timers=[];
+ const clear=()=>{timers.forEach(clearTimeout);timers=[]};
+ function draw(){
+  const body=step===3
+   ? `<div class="demo-success" role="status"><div class="success-circle">${icon('check',28)}</div><h3>任务已创建</h3><p>“去游泳”已添加到任务列表</p><span class="demo-success-tag">模拟结果 · 未写入数据库</span></div>`
+   : `<h3>想到什么，直接告诉我</h3><p>不用填写表格，AI 将帮你拆解任务。</p>
+      <textarea data-raw rows="3" aria-label="任务描述" placeholder="例如：明天去游泳，带好装备">${escapeHTML(input)}</textarea>
+      ${step===0
+        ? `<button class="demo-primary" data-action="next" ${input.trim()?'':'disabled'}>让 AI 理解 ${icon('arrow',15)}</button>`
+        : `<div class="parsed-card"><span class="parsed-caption">${step===1?'正在解析 · Mock':'AI 识别结果 · Mock'}</span>
+            <div class="parsed-title">${icon('checkcircle',17)} 去游泳</div><div class="parsed-line">${icon('clock',15)} 明天下午</div>
+            <div class="parsed-line">${icon('list',15)} 泳裤、泳镜、学生卡</div></div>
+          <button class="demo-primary" data-action="next">${variant==='b'?'查看创建结果':'确认创建'} ${icon('arrow',15)}</button>`}`;
+  target.innerHTML=`<div class="phone-demo"><div class="phone-status"><span>9:41</span><span>●●● ▰</span></div>
+   <div class="phone-head"><span class="phone-back">${icon('arrowleft',16)} 返回</span><span class="phone-head-title">快速创建</span><span>${icon('spark',17)}</span></div>
+   <div class="create-hero"><div class="create-hero-icon">${icon('spark',24)}</div><span>你的 AI 任务助手</span></div>
+   <div class="create-body">${body}</div><div class="phone-bottom"><span></span></div></div>`;
+  target.querySelector('[data-raw]')?.addEventListener('input',e=>{input=e.target.value;const b=target.querySelector('[data-action="next"]');if(step===0&&b)b.disabled=!input.trim()});
+  target.querySelector('[data-action="next"]')?.addEventListener('click',()=>{if(step===0&&!input.trim())return;step=step===0?2:3;notify(step===3?'task.created':'task.parsing');draw()});
+ }
+ function setStep(n){clear();step=n;draw()}
+ function replay(onStep=()=>{}){setStep(0);onStep(0);[1,2,3].forEach((n,i)=>timers.push(setTimeout(()=>{step=n;draw();onStep(n)},700+(i*650))))}
+ draw();return{setStep,replay,reset:()=>setStep(0),destroy:clear};
+}
+
+
+function mountRecommend(target,variant,notify=()=>{}){
+ let step=0,timers=[];const clear=()=>{timers.forEach(clearTimeout);timers=[]};
+ function draw(){
+  target.innerHTML=`<div class="phone-demo"><div class="phone-status"><span>9:41</span><span>●●● ▰</span></div>
+  <div class="phone-head"><span class="phone-back">${icon('arrowleft',16)} 返回</span><span class="phone-head-title">今日推荐</span><span>${icon('spark',17)}</span></div>
+  <div class="recommend-body"><div class="recommend-label">THURSDAY · TODAY</div><h3>${step===3?'现在，开始行动':'现在最值得做的事'}</h3><p>AI 根据任务与时间生成的建议（Mock）</p>
+  ${step===3?`<div class="demo-success"><div class="success-circle">${icon('check',28)}</div><h3>开始准备装备</h3><p>已选择下一步，祝你顺利。</p></div>`:
+  `<div class="rec-card ${variant==='b'?'focus':''}"><div class="rec-icon">🏊</div><span class="rec-badge">${icon('zap',12)} 推荐 #1</span><h3>准备游泳装备</h3><p>大约 2 分钟就能完成</p>${step>=1?`<div class="rec-reason">${icon('info',16)} 因为游泳时间临近，提前准备可以减少遗漏。</div>`:''}<div class="rec-actions"><button class="btn-quiet" data-action="skip">换一个</button><button class="demo-primary" data-action="start">${step===0?'查看建议':'开始准备'} ${icon('arrow',14)}</button></div></div>`}</div>
+  <div class="phone-bottom"><span></span></div></div>`;
+  target.querySelector('[data-action="start"]')?.addEventListener('click',()=>{step=step===0?1:3;notify(step===3?'focus.started':'recommendation.explored');draw()});
+  target.querySelector('[data-action="skip"]')?.addEventListener('click',()=>{step=1;notify('recommendation.skipped');draw()});
+ }
+ function setStep(n){clear();step=n;draw()}
+ function replay(onStep=()=>{}){setStep(0);onStep(0);[1,2,3].forEach((n,i)=>timers.push(setTimeout(()=>{step=n;draw();onStep(n)},550+i*700)))}
+ draw();return{setStep,replay,reset:()=>setStep(0),destroy:clear};
+}
+
+
+
+
+
+
+
+
+const root=document.getElementById('app');
+const s=loadState();
+let preview=null,comparisons=[],toastTimer=0;
+const nav=[['overview','grid','工作台总览'],['feature','layers','功能设计'],['compare','layout','方案对比'],['design','palette','设计系统'],['review','shield','验收与反馈'],['guide','file','使用指南']];
+const labels={overview:'工作台总览',feature:'功能设计',compare:'方案对比',design:'设计系统',review:'验收与反馈',guide:'使用指南'};
+const statuses={exploring:['设计探索中','blue'],draft:['需求草案','amber'],approved:['已确认','green']};
+const themes=[['ocean','海洋蓝'],['mint','薄荷绿'],['plum','莓果紫']];
+function store(){saveState(s)}
+function getCurrent(){return getFeature(s.currentFeature)}
+function currentVariant(f){return s.variantByFeature[f.id]||'a'}
+function badge(text,kind=''){return `<span class="badge ${kind}">${esc(text)}</span>`}
+function button(text,action,kind='',extra=''){return `<button class="btn ${kind}" data-action="${action}" ${extra}>${text}</button>`}
+function showToast(text){document.querySelector('.toast')?.remove();clearTimeout(toastTimer);const el=document.createElement('div');el.className='toast';el.textContent=text;document.body.appendChild(el);toastTimer=setTimeout(()=>el.remove(),3100)}
+function destroyPreviews(){preview?.destroy();preview=null;comparisons.forEach(c=>c.destroy());comparisons=[]}
+function mountDemo(target,feature,variant,notify){return (feature.id==='F001'?mountSwim:feature.id==='F002'?mountCreate:mountRecommend)(target,variant,notify)}
+function navView(){return `<aside class="sidebar" id="sidebar"><div class="brand"><div class="brand-symbol"><i></i><i></i><i></i><i></i></div><div><div class="brand-name">forma<span style="color:var(--brand-200)">.</span></div><div class="brand-sub">PRODUCT DESIGN STUDIO</div></div></div><div class="nav-group-label">工作空间</div><nav class="nav-links" aria-label="主导航">${nav.map(([id,i,label])=>`<button class="nav-item ${s.page===id?'active':''}" data-page="${id}">${icon(i,18)} <span>${label}</span>${id==='feature'?`<span class="nav-count">${features.length}</span>`:''}</button>`).join('')}</nav><div class="sidebar-bottom"><div class="sidebar-profile"><div class="avatar">AI</div><div><strong>个人设计工作区</strong><small><i class="online-dot"></i>本地 MVP · 离线可用</small></div></div></div></aside><div class="sidebar-backdrop" data-action="close-menu"></div>`}
+function topView(){return `<header class="topbar"><div class="topbar-left"><button class="icon-btn mobile-top" data-action="menu" aria-label="打开菜单">${icon('menu',19)}</button><span class="crumb">工作空间</span><span class="crumb">/</span><span class="topbar-title">${labels[s.page]}</span></div><div class="topbar-actions"><span class="topbar-pill">${icon('checkcircle',14)} 数据保存在本地</span>${button(`${icon('download',15)} 导出设计包`,'export','btn-primary')}</div></header>`}
+function head(kicker,title,description,right=''){return `<div class="page-head"><div><div class="page-kicker">${kicker}</div><h1>${title}</h1><p class="page-desc">${description}</p></div>${right}</div>`}
+function featureTile(f){const [label,color]=statuses[f.status];return `<button class="feature-tile" data-feature="${f.id}"><span class="feature-icon">${icon(f.id==='F001'?'checkcircle':f.id==='F002'?'message':'spark',21)}</span><span style="min-width:0;flex:1"><span class="title">${f.id} · ${esc(f.title)}</span><span class="desc" style="display:block">${esc(f.summary)}</span><span class="meta">${badge(f.priority,'')} ${badge(f.category,'')}</span></span><span class="tile-right">${badge(s.approved[f.id]?`已选 ${s.approved[f.id].toUpperCase()} 方案`:label,s.approved[f.id]?'green':color)}${icon('chevron',17)}</span></button>`}
+function overviewView(){const accepted=Object.keys(s.approved).length;const passing=studioHealth().filter(x=>x.ok).length;const updates=s.activity.slice(0,4);return `${head('WELCOME BACK','把想法变成可以体验的设计','让 AI 生成需求与可运行原型，让你用真实交互来审查和选择方案。每个功能都有独立的规范、数据、流程与验收结果。',button(`${icon('arrow',15)} 开始设计`,'go-feature','btn-primary'))}
+<div class="cta-banner"><div><div class="overline" style="color:var(--brand-200);margin-bottom:8px">DESIGN WORKFLOW · V0.1</div><h2>从需求假设，到可执行的产品规范。</h2><p>试用交互、回放流程、切换主题、并排比较 A/B。把探索过程留在版本记录中，而不是覆盖已经满意的设计。</p></div>${button(`打开 F001 演示 ${icon('arrow',14)}`,'open-first','')}</div>
+<div class="stats-grid">
+${[['功能设计包',features.length,'layers','包含三套完整示例'],['可体验方案',features.reduce((n,f)=>n+f.variants.length,0),'layout','相互独立的交互路径'],['结构完整性',`${passing}/${features.length}`,'shield','需求 · 字段 · 流程 · 验收'],['已选定方案',accepted,'checkcircle','仅人工审批会改变']].map(([title,value,i,note])=>`<div class="card stat-card"><div><div class="muted small">${title}</div><div class="stat-num">${value}</div><div class="stat-caption">${note}</div></div><div class="stat-icon">${icon(i,19)}</div></div>`).join('')}
+</div><div class="dashboard-grid"><section><div class="section-heading"><h2>功能设计包</h2><button class="text-link" style="border:0;background:transparent" data-page="feature">查看工作台 ${icon('arrow',14)}</button></div><div class="feature-list">${features.map(featureTile).join('')}</div></section><div style="display:grid;align-content:start;gap:18px"><div class="card card-pad"><div class="section-heading"><h2>规范驱动的设计流程</h2></div><div class="process-list">${[['记录需求','先说明问题与预期用户体验'],['整理字段','声明 UI 所需数据与来源'],['制作原型','让不同方案可以真实操作'],['自动检查','工程规范、交互状态与可访问性'],['人工审查','保留方案，记录选择和反馈']].map(([a,b],i)=>`<div class="process-item"><span class="process-number">${String(i+1).padStart(2,'0')}</span><div><b>${a}</b><p>${b}</p></div></div>`).join('')}</div></div><div class="card card-pad"><div class="section-heading"><h2>最近的决策</h2><button class="text-link" style="border:0;background:transparent" data-page="review">查看全部</button></div>${updates.length?updates.map(x=>`<div class="activity-item"><span class="activity-icon">${icon('checkcircle',15)}</span><div><strong>${esc(x.message)}</strong><small>${new Date(x.time).toLocaleString('zh-CN')}</small></div></div>`).join(''):`<p class="small muted">还没有审批记录。打开一个功能，体验方案之后保存反馈。</p>`}</div></div></div>`}
+function requirementPanel(f,tab){
+ if(tab==='fields')return `<div class="panel-header"><div><div class="panel-label">02 · DATA CONTRACT</div><h2>界面业务字段</h2></div>${badge(f.fields.length+' 个字段')}</div><p class="small muted" style="margin-bottom:15px">不包含数据库 ID。字段名为原型所需的视图契约，真实 API 对接需要额外核对。</p><div class="field-scroll"><table class="field-table"><thead><tr><th>字段</th><th>类型</th><th>示例 / 来源</th></tr></thead><tbody>${f.fields.map(x=>`<tr><td><code>${esc(x.key)}</code>${x.required?'<span class="required-dot"> *</span>':''}<div class="tiny muted" style="margin-top:5px">${esc(x.label)}</div></td><td><small>${esc(x.type)}</small></td><td>${esc(x.example)}<br><small>${esc(x.origin)}</small></td></tr>`).join('')}</tbody></table></div>`;
+ if(tab==='acceptance')return `<div class="panel-header"><div><div class="panel-label">07 · ACCEPTANCE</div><h2>验收条件</h2></div>${badge(f.acceptance.length+' 项')}</div><div class="info-card"><div class="idea">${icon('info',14)} 审查提示</div><p>以下是功能正确性的验收定义，不代表产品体验已经优秀。体验评价由人工决定。</p></div>${f.acceptance.map(x=>`<div class="spec-line"><span class="spec-bullet">${icon('check',13)}</span><span><strong style="font-size:10px;color:var(--ink-faint)">${x.id}</strong><br>${esc(x.text)}</span></div>`).join('')}`;
+ return `<div class="panel-header"><div><div class="panel-label">01 · REQUIREMENT</div><h2>需求说明</h2></div>${badge(f.requirements.length+' 条')}</div><div class="info-card"><div class="idea">${icon('target',15)} 用户问题</div><p>${esc(f.problem)}</p></div><div class="info-card"><div class="idea">${icon('checkcircle',15)} 设计目标</div><p>${esc(f.goal)}</p></div><div class="spec-divider"></div><div class="spec-label">功能要求</div>${f.requirements.map(x=>`<div class="spec-line"><span class="spec-bullet">${icon('check',13)}</span><div><span style="color:var(--ink-faint);font-size:10px">${x.id} · ${x.type==='must'?'必须':'期望'}</span><br>${esc(x.text)}</div></div>`).join('')}<div class="spec-divider"></div><div class="spec-label">当前不做</div>${f.nonGoals.map(x=>`<p class="small muted" style="margin-bottom:6px">· ${esc(x)}</p>`).join('')}`;
+}
+function featureView(){const f=getCurrent(),variant=getVariant(f,currentVariant(f));const [statusLabel,color]=statuses[f.status];return `<div class="feature-head"><div class="feature-tagline">${badge(f.id,'blue')}${badge(s.approved[f.id]?`已选 ${s.approved[f.id].toUpperCase()} 方案`:statusLabel,s.approved[f.id]?'green':color)}${badge(f.category)}</div><h1>${esc(f.title)}</h1><p class="page-desc">${esc(f.summary)}</p><div class="feature-quickinfo"><span>${icon('layers',14)} ${f.variants.length} 个交互方案</span><span>${icon('list',14)} ${f.fields.length} 个业务字段</span><span>${icon('shield',14)} ${f.acceptance.length} 条验收条件</span></div></div>
+<div class="section-heading"><div class="tabs" role="tablist" aria-label="规格文档选项卡">${[['requirements','需求说明','file'],['fields','业务字段','list'],['acceptance','验收标准','shield']].map(([id,label,i])=>`<button class="tab ${s.activeTab===id?'active':''}" data-tab="${id}" role="tab" aria-selected="${s.activeTab===id}">${icon(i,15)} ${label}</button>`).join('')}</div><button class="btn btn-small" data-action="compare">${icon('layout',15)} 对比方案</button></div>
+<div class="workbench"><section class="card card-pad panel" id="spec-panel">${requirementPanel(f,s.activeTab)}</section><section class="card card-pad panel"><div class="panel-header"><div><div class="panel-label">03 · INTERACTION FLOW</div><h2>可执行交互流程</h2></div>${badge('点击步骤','blue')}</div><div class="variant-switch" style="margin-bottom:17px">${f.variants.map(v=>`<button class="${variant.id===v.id?'active':''}" data-variant="${v.id}">${v.id.toUpperCase()} 方案</button>`).join('')}</div><div class="info-card"><strong>${esc(variant.name)}</strong><p>${esc(variant.description)}</p></div><div class="flow-list">${variant.steps.map((step,i)=>`${i?'<div class="flow-connector"></div>':''}<button class="flow-step ${i===0?'active':''}" data-step="${i}"><span class="flow-number">${String(i+1).padStart(2,'0')}</span><div class="flow-text"><strong>${esc(step.name)}</strong><p>${esc(step.detail)}</p><div class="event-chip">${esc(step.event)}</div></div></button>`).join('')}</div><div style="display:flex;gap:8px;margin-top:18px">${button(`${icon('play',14)} 播放完整流程`,'replay','btn-primary','style="flex:1"')}${button(icon('refresh',15),'reset','','aria-label="重置" title="重置"')}</div></section>
+<section class="preview-panel"><div class="preview-top"><div><div class="panel-label">04 · LIVE PROTOTYPE</div><h2>真实交互原型</h2></div><span class="badge blue">${icon('monitor',12)} LIVE</span></div><div class="preview-bg"><div id="live-preview" style="width:100%;display:flex;justify-content:center;align-items:flex-start"></div></div><div class="small muted" style="margin-top:12px;line-height:1.6">${icon('info',14)} 你可以直接点击手机内的控件，也可以从左边选中流程节点，或播放整个操作过程。</div></section></div>`}
+function compareView(){const f=getCurrent();return `${head('VARIANT EXPLORER','并排体验，不覆盖旧方案','相同的业务字段、独立的交互逻辑。你可以在两个原型中分别操作，保留喜欢的方案，并记录决策理由。',`<span class="badge blue">${f.id} · ${esc(f.title)}</span>`)}
+<div class="compare-grid">${f.variants.map(v=>`<section class="card card-pad compare-panel"><div class="section-heading" style="margin-bottom:0"><div><div class="overline">FLOW VARIANT ${v.id.toUpperCase()}</div><h2 style="margin-top:6px">${esc(v.name)}</h2></div>${s.approved[f.id]===v.id?badge('已选定','green'):badge('候选')}</div><p>${esc(v.description)}</p><div class="compare-preview"><div id="compare-${v.id}" style="display:flex;justify-content:center;width:100%"></div></div><div class="compare-actions"><button class="btn btn-small" data-replay-compare="${v.id}">${icon('play',14)} 播放</button><button class="btn btn-small" data-reset-compare="${v.id}">${icon('refresh',14)} 重置</button><button class="btn btn-small btn-primary" data-approve="${v.id}" ${s.approved[f.id]===v.id?'disabled':''}>${icon('check',14)} ${s.approved[f.id]===v.id?'已选定':'选定此方案'}</button></div></section>`).join('')}</div><div class="card card-pad" style="margin-top:18px"><div class="section-heading"><h2>如何管理方案版本？</h2>${badge('共享数据 + 独立实现')}</div><div class="doc-grid"><div class="spec-block"><h3>交互方案 A / B</h3><p>在相同视图字段上运行不同的交互。选择 B 不会删除 A。不同方案各自维护自己的运行状态。</p></div><div class="spec-block"><h3>历史修订</h3><p>交互方案的多次修改请通过 Git commit / 分支追溯，不把每一次小改动都复制成全新页面。</p></div></div></div>`}
+function designView(){return `${head('DESIGN FOUNDATION','一个统一的设计系统','你无需理解每个 CSS 细节。AI 必须先选用已有语义 Token；当前主题可以实时切换，所有原型共享同一套变量。')}
+<div class="card card-pad" style="margin-bottom:18px"><div class="section-heading"><div><h2>01 · 选择主题</h2><p class="card-sub">改变整个工作台与原型的语义配色，不触碰业务逻辑。</p></div>${badge('全局作用','blue')}</div><div class="theme-options">${themes.map(([id,name])=>`<button class="theme-option ${s.theme===id?'active':''}" data-theme-choice="${id}"><span class="theme-dot" style="background:var(--theme-dot-${id})"></span>${name}${s.theme===id?icon('check',14):''}</button>`).join('')}</div></div>
+<div class="card card-pad" style="margin-bottom:18px"><div class="section-heading"><h2>02 · Semantic Color Tokens</h2>${badge('不允许在业务组件硬编码')}</div><div class="token-grid">${[['品牌行动色','brand-500','var(--brand-500)'],['浅色强调','brand-50','var(--brand-50)'],['主文字','ink-strong','var(--ink-strong)'],['辅助文字','ink-muted','var(--ink-muted)'],['页面背景','canvas','var(--canvas)'],['分隔边框','border','var(--border)'],['成功状态','success-600','var(--success-600)'],['警示状态','warning-600','var(--warning-600)']].map(([label,name,color])=>`<div class="token-card"><div class="swatch" style="background:${color}"></div><strong>${label}</strong><span>--${name}</span></div>`).join('')}</div></div>
+<div class="doc-grid"><section class="card card-pad"><div class="section-heading"><h2>03 · 排版与间距</h2></div><div style="display:grid;gap:12px"><h1 style="font-size:27px">页面标题 H1</h1><h2>区块标题 H2</h2><h3>组件标题 H3</h3><p class="small muted">正文 12–14px，行高一致，采用语义层级而非随意选字号。</p></div><div class="divider"></div><div class="token-row">${[4,8,12,16,20,24].map(n=>`<div style="text-align:center;font-size:10px;color:var(--ink-muted)"><div style="width:${n}px;height:${n}px;background:var(--brand-500);border-radius:3px;margin:auto auto 8px"></div>${n}px</div>`).join('')}</div></section>
+<section class="card card-pad"><div class="section-heading"><h2>04 · 组件与动效</h2></div><div class="theme-options">${button('主要按钮','noop','btn-primary')}${button('次级操作','noop')}${badge('已完成','green')}${badge('待验证','amber')}</div><div class="divider"></div><div class="overline">MOTION TOKENS</div><div class="motion-dots"><span></span><span></span><span></span></div><p class="small muted">统一时长与缓动曲线；用户设置减弱动态效果时自动关闭复杂动画。</p></section></div>
+<div class="card card-pad" style="margin-top:18px"><div class="section-heading"><h2>05 · 自动约束原则</h2>${badge('npm run lint:design','green')}</div><div class="doc-grid">${[['禁止硬编码颜色','组件 CSS 必须使用 Tokens，不允许直接写十六进制颜色值。'],['组件优先复用','普通需求修改优先扩展现有组件，不重复生成相似 UI。'],['交互状态完整','加载、禁用、成功、失败等状态必须考虑并提供验收。'],['隔离生成式 UI','正式产品中的动态生成代码，应在沙箱与受控接口下运行。']].map(([a,b])=>`<div class="spec-block"><h3>${a}</h3><p>${b}</p></div>`).join('')}</div></div>`}
+function reviewView(){const f=getCurrent(),checks=s.reviewedChecks[f.id]||{};const checked=f.acceptance.filter(a=>checks[a.id]).length;const health=studioHealth();return `${head('HUMAN-IN-THE-LOOP','审查、反馈与确认','机器负责检查结构和显而易见的规则，你负责判断体验是否合理。审批只标记选择，不会自动修改真实业务系统。')}
+<div class="review-layout"><section class="card card-pad"><div class="section-heading"><div><h2>验收清单 · ${f.id}</h2><p class="card-sub">${esc(f.title)} · ${checked} / ${f.acceptance.length} 项手动确认</p></div><span class="badge blue">需人工判断</span></div>${f.acceptance.map(x=>`<label class="check-row"><input type="checkbox" data-review-check="${x.id}" ${checks[x.id]?'checked':''}/><div><strong>${x.id}</strong><p>${esc(x.text)}</p></div></label>`).join('')}<div class="divider"></div><div class="section-heading"><h2>审核意见</h2>${badge('自动保存本地')}</div><textarea class="textarea" id="review-notes" placeholder="例如：方案 A 更直观，但完成动画可以借鉴方案 B……">${esc(s.reviews[f.id]||'')}</textarea><p class="form-note">你的反馈只保存在当前浏览器。导出设计包可备份，不会发送到云端。</p></section>
+<aside style="display:grid;gap:18px;align-content:start"><div class="card card-pad"><div class="section-heading"><h2>自动结构检查</h2>${badge(health.every(h=>h.ok)?'全部通过':'发现问题',health.every(h=>h.ok)?'green':'amber')}</div>${health.map(x=>`<div class="check-row" style="align-items:center"><span style="color:var(--success-600)">${icon(x.ok?'checkcircle':'circle',17)}</span><div><strong>${x.id}</strong><p>${x.ok?'需求、字段、流程、验收均有定义':x.failures.join('、')}</p></div></div>`).join('')}<p class="form-note">这是结构校验，不是 UI 视觉测试。正式项目仍需补充浏览器自动化和视觉回归。</p></div><div class="card card-pad"><div class="section-heading"><h2>当前选定方案</h2></div>${s.approved[f.id]?`<p style="margin-bottom:12px">${badge(`方案 ${s.approved[f.id].toUpperCase()} 已选定`,'green')}</p>`:`<p class="small muted" style="margin-bottom:12px">目前尚未选定交互方案。先到“方案对比”页面真实操作两种设计。</p>`}<button class="btn btn-full" data-action="compare">${icon('layout',15)} 打开方案对比</button></div></aside></div>`}
+function guideView(){return `${head('PROJECT PLAYBOOK','和 AI 一起维护设计工作台','这是一套可扩展的设计资产协议，而不是要求 AI 把整个产品写进一个 HTML 文件。AI 负责填充工程化的功能包，你只需要体验、反馈、选择。')}
+<div class="card card-pad" style="margin-bottom:18px"><div class="section-heading"><h2>AI 协作的五个强制关卡</h2>${badge('AGENTS.md')}</div><div class="doc-grid">${[['01','分析需求','写出问题、目标、必要字段和边界'],['02','生成候选','创建独立交互方案与可运行场景'],['03','运行检查','结构、类型、Token 和核心交互测试'],['04','人工体验','可播放流程、切换主题、对比 A/B'],['05','确认交付','保留旧方案、记录选择、生成后续开发任务']].map(([n,a,b])=>`<div class="pill-step"><span class="circle-no">${n}</span><div><strong>${a}</strong><p>${b}</p></div></div>`).join('')}</div></div>
+<div class="doc-grid"><div class="card card-pad"><div class="section-heading"><h2>新功能怎么加？</h2></div><p class="small muted">① 在 <code>src/data/features.js</code> 定义新功能的需求、字段和流程。<br>② 在 <code>src/components/</code> 编写独立可运行的原型。<br>③ 将组件登记到 <code>src/app.js</code> 的 Demo Registry。<br>④ 补充验证，运行 <code>npm run check</code>。<br>⑤ 让你在工作台中试用后再选定方案。</p><div class="divider"></div>${button(`${icon('copy',14)} 复制 AI 工作指令`,'copy-agent','btn-primary')}</div><div class="card card-pad"><div class="section-heading"><h2>本地运行</h2></div><div class="spec-block"><code>npm run dev</code><p style="margin-top:6px">访问 http://localhost:5173。没有运行时依赖，Node.js 20+ 即可。</p></div><div style="height:10px"></div><div class="spec-block"><code>npm run check</code><p style="margin-top:6px">运行 Token/CSS 规则检查与结构测试。</p></div><div class="divider"></div>${button(`${icon('download',14)} 导出当前设计包`,'export')}</div></div><div class="card card-pad" style="margin-top:18px"><div class="section-heading"><h2>当前版本的明确边界</h2></div><p class="small muted">这是<strong>离线可运行的产品设计工作台 MVP</strong>，不是已经接入你个人模型或 SuperAgent 的完整 SaaS。三个功能使用 Mock 数据。审核状态保存在本机浏览器。自动回放与结构校验已经实现；真实大模型接入、跨设备同步、Storybook/MDX 集成、可点击图节点与视觉截图回归是后续迭代。</p></div>`}
+function mountCurrent(){const f=getCurrent(),v=currentVariant(f);if(s.page==='feature'){
+ const node=document.getElementById('live-preview');if(node){preview=mountDemo(node,f,v,()=>{});}
+ }else if(s.page==='compare'){comparisons=f.variants.map(variant=>({id:variant.id,...mountDemo(document.getElementById('compare-'+variant.id),f,variant.id)}))}
+}
+function render(){destroyPreviews();document.documentElement.dataset.theme=s.theme;const pages={overview:overviewView,feature:featureView,compare:compareView,design:designView,review:reviewView,guide:guideView};root.innerHTML=`<div class="app-shell">${navView()}<div class="main-frame">${topView()}<main class="content" id="content">${(pages[s.page]||overviewView)()}</main></div></div>`;mountCurrent()}
+function go(page){if(!labels[page])return;s.page=page;store();render();window.scrollTo({top:0,behavior:'instant'})}
+function selectFeature(id){s.currentFeature=id;s.activeTab='requirements';s.page='feature';store();render();window.scrollTo({top:0,behavior:'instant'})}
+function selectStep(n){preview?.setStep(n);document.querySelectorAll('[data-step]').forEach(b=>b.classList.toggle('active',Number(b.dataset.step)===n))}
+function changeVariant(v){s.variantByFeature[s.currentFeature]=v;store();render()}
+function changeTheme(id){s.theme=id;store();document.documentElement.dataset.theme=id;document.querySelectorAll('[data-theme-choice]').forEach(b=>b.classList.toggle('active',b.dataset.themeChoice===id));showToast('主题已切换 · 未更改业务数据')}
+function exportCurrent(){const f=getCurrent(),packet={exportedAt:new Date().toISOString(),format:'forma-feature-package-v1',feature:f,review:{notes:s.reviews[f.id]||'',checks:s.reviewedChecks[f.id]||{},approvedVariant:s.approved[f.id]||null},design:{theme:s.theme}};const blob=new Blob([JSON.stringify(packet,null,2)],{type:'application/json;charset=utf-8'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`${f.id}-design-package.json`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);showToast('已导出 '+f.id+' 设计包 JSON')}
+function copyAgent(){const task=`你是本仓库的 AI Product Designer。请先阅读 AGENTS.md 和 docs/WORKFLOW.md。不要绕过审核关卡。所有新增功能必须有 ID、需求、业务字段、交互方案、可运行原型和验收条件。禁止在功能 CSS 中硬编码颜色，统一使用设计 Tokens。请在独立文件内实现候选方案，保留已批准方案，运行 npm run check，列出变更影响，再提交让我体验。`;navigator.clipboard?.writeText(task).then(()=>showToast('AI 工作指令已复制')).catch(()=>showToast('复制未成功，请阅读仓库 AGENTS.md'))}
+root.addEventListener('click',e=>{
+ const b=e.target.closest('button');if(!b)return;
+ if(b.dataset.page){go(b.dataset.page);return}
+ if(b.dataset.feature){selectFeature(b.dataset.feature);return}
+ if(b.dataset.tab){s.activeTab=b.dataset.tab;store();render();return}
+ if(b.dataset.variant){changeVariant(b.dataset.variant);return}
+ if(b.dataset.themeChoice){changeTheme(b.dataset.themeChoice);return}
+ if(b.dataset.step!==undefined){selectStep(Number(b.dataset.step));return}
+ if(b.dataset.approve){const f=getCurrent();s.approved[f.id]=b.dataset.approve;logAction(s,`${f.id} 选定方案 ${b.dataset.approve.toUpperCase()}`);render();showToast('已保存方案选择，其他方案仍被保留');return}
+ if(b.dataset.replayCompare){const c=comparisons.find(x=>x.id===b.dataset.replayCompare);c?.replay();return}
+ if(b.dataset.resetCompare){const c=comparisons.find(x=>x.id===b.dataset.resetCompare);c?.reset();return}
+ const action=b.dataset.action;
+ if(action==='go-feature'||action==='open-first'){selectFeature('F001');return}
+ if(action==='compare'){go('compare');return}
+ if(action==='replay'){preview?.replay(i=>{document.querySelectorAll('[data-step]').forEach(x=>x.classList.toggle('active',Number(x.dataset.step)===i))});return}
+ if(action==='reset'){selectStep(0);return}
+ if(action==='export'){exportCurrent();return}
+ if(action==='copy-agent'){copyAgent();return}
+ if(action==='menu'){document.getElementById('sidebar').classList.add('open');document.querySelector('.sidebar-backdrop').classList.add('open');return}
+ if(action==='close-menu'){document.getElementById('sidebar').classList.remove('open');document.querySelector('.sidebar-backdrop').classList.remove('open');return}
+});
+root.addEventListener('change',e=>{
+ if(e.target.matches('[data-review-check]')){const f=getCurrent();s.reviewedChecks[f.id]??={};s.reviewedChecks[f.id][e.target.dataset.reviewCheck]=e.target.checked;store();}
+});
+root.addEventListener('input',e=>{if(e.target.matches('#review-notes')){s.reviews[s.currentFeature]=e.target.value;store()}});
+render();
+
+})()</script></body></html>
